@@ -1,0 +1,58 @@
+[
+  {
+    "code": "159845",
+    "name": "中证1000ETF华夏",
+    "market": "A",
+    "latest_price": 3.24,
+    "trigger_price": 3.012,
+    "hold_days": 18,
+    "status": "warning",
+    "urgency_label": "临近",
+    "alert_type": "breakeven",
+    "rule_label": "保本退出",
+    "current_pnl": 7.57,
+    "message": "最新收盘价 3.240，若次日收盘前价格 ≤ 3.012，建议卖出；若价格 > 3.012，可继续持有。"
+  },
+  {
+    "code": "159552",
+    "name": "中证2000增强ETF招商",
+    "market": "A",
+    "latest_price": 2.274,
+    "trigger_price": 2.086,
+    "hold_days": 8,
+    "status": "warning",
+    "urgency_label": "临近",
+    "alert_type": "breakeven",
+    "rule_label": "保本退出",
+    "current_pnl": 9.01,
+    "message": "最新收盘价 2.274，若次日收盘前价格 ≤ 2.086，建议卖出；若价格 > 2.086，可继续持有。"
+  },
+  {
+    "code": "516150",
+    "name": "稀土ETF嘉实",
+    "market": "A",
+    "latest_price": 1.812,
+    "trigger_price": 1.686,
+    "hold_days": 8,
+    "status": "warning",
+    "urgency_label": "临近",
+    "alert_type": "breakeven",
+    "rule_label": "保本退出",
+    "current_pnl": 7.47,
+    "message": "最新收盘价 1.812，若次日收盘前价格 ≤ 1.686，建议卖出；若价格 > 1.686，可继续持有。"
+  },
+  {
+    "code": "562800",
+    "name": "稀有金属ETF嘉实",
+    "market": "A",
+    "latest_price": 0.979,
+    "trigger_price": 0.903,
+    "hold_days": 8,
+    "status": "warning",
+    "urgency_label": "临近",
+    "alert_type": "breakeven",
+    "rule_label": "保本退出",
+    "current_pnl": 8.42,
+    "message": "最新收盘价 0.979，若次日收盘前价格 ≤ 0.903，建议卖出；若价格 > 0.903，可继续持有。"
+  }
+]
