@@ -1,0 +1,26 @@
+{
+  "date": "2026-08-14",
+  "market_status": "爬升",
+  "market_tier": "strong",
+  "breadth": 0.5,
+  "breadth_ma5": 0.4616730769230769,
+  "state_day": 1,
+  "hk_state": "bear",
+  "risk_summary": {
+    "risk_level": 5,
+    "risk_label": "高风险",
+    "risk_color": "#cf222e",
+    "position": "0-2成",
+    "description": "市场量能处于历史高位且持续放大，属于明显过热状态。",
+    "opportunity": "几乎无安全边际的机会，不建议追高。",
+    "risk_text": "见顶回落风险极大，应果断减仓甚至清仓避险。",
+    "market_status": "爬升",
+    "state_day": 1,
+    "breadth": 0.5,
+    "breadth_ma5": 0.4617,
+    "margin_state": "高位温和加杠杆",
+    "turnover_state": "高位温和放量",
+    "update_date": "2026-08-14"
+  },
+  "updated_at": "2026-09-04T10:06:35+08:00"
+}
