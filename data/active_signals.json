@@ -1,0 +1,119 @@
+[
+  {
+    "code": "588830",
+    "name": "科创新能源ETF鹏华",
+    "entry_date": "2026-08-04",
+    "entry_price": 1.19,
+    "latest_price": 1.258,
+    "pnl_pct": 5.71,
+    "hold_days": 8
+  },
+  {
+    "code": "159387",
+    "name": "创业板新能源ETF国泰",
+    "entry_date": "2026-08-04",
+    "entry_price": 0.726,
+    "latest_price": 0.76,
+    "pnl_pct": 4.68,
+    "hold_days": 8
+  },
+  {
+    "code": "563300",
+    "name": "中证2000ETF华泰柏瑞",
+    "entry_date": "2026-08-06",
+    "entry_price": 1.38,
+    "latest_price": 1.437,
+    "pnl_pct": 4.13,
+    "hold_days": 6
+  },
+  {
+    "code": "159638",
+    "name": "高端装备ETF嘉实",
+    "entry_date": "2026-08-04",
+    "entry_price": 0.823,
+    "latest_price": 0.851,
+    "pnl_pct": 3.4,
+    "hold_days": 8
+  },
+  {
+    "code": "512660",
+    "name": "军工ETF国泰",
+    "entry_date": "2026-08-04",
+    "entry_price": 1.116,
+    "latest_price": 1.152,
+    "pnl_pct": 3.23,
+    "hold_days": 8
+  },
+  {
+    "code": "159227",
+    "name": "航空航天ETF华夏",
+    "entry_date": "2026-08-04",
+    "entry_price": 0.995,
+    "latest_price": 1.026,
+    "pnl_pct": 3.12,
+    "hold_days": 8
+  },
+  {
+    "code": "159267",
+    "name": "航天ETF华安",
+    "entry_date": "2026-08-04",
+    "entry_price": 0.845,
+    "latest_price": 0.87,
+    "pnl_pct": 2.96,
+    "hold_days": 8
+  },
+  {
+    "code": "515790",
+    "name": "光伏ETF华泰柏瑞",
+    "entry_date": "2026-08-04",
+    "entry_price": 0.842,
+    "latest_price": 0.865,
+    "pnl_pct": 2.73,
+    "hold_days": 8
+  },
+  {
+    "code": "515030",
+    "name": "新能源车ETF华夏",
+    "entry_date": "2026-08-04",
+    "entry_price": 1.628,
+    "latest_price": 1.67,
+    "pnl_pct": 2.58,
+    "hold_days": 8
+  },
+  {
+    "code": "159326",
+    "name": "电网设备ETF华夏",
+    "entry_date": "2026-08-06",
+    "entry_price": 1.676,
+    "latest_price": 1.714,
+    "pnl_pct": 2.27,
+    "hold_days": 6
+  },
+  {
+    "code": "562910",
+    "name": "高端制造ETF易方达",
+    "entry_date": "2026-08-04",
+    "entry_price": 0.844,
+    "latest_price": 0.859,
+    "pnl_pct": 1.78,
+    "hold_days": 8
+  },
+  {
+    "code": "159565",
+    "name": "汽车零部件ETF易方达",
+    "entry_date": "2026-08-04",
+    "entry_price": 1.309,
+    "latest_price": 1.324,
+    "pnl_pct": 1.15,
+    "hold_days": 8
+  },
+  {
+    "code": "159573",
+    "name": "创业板200ETF华夏",
+    "entry_date": "2026-08-10",
+    "entry_price": 1.477,
+    "latest_price": 1.494,
+    "pnl_pct": 1.15,
+    "hold_days": 4
+  }
+]
