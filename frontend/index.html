@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<meta name="theme-color" content="#1a1a18" />
+<title>ETF精选信号</title>
+<style>
+  :root{
+    --paper:#f5f4f1;
+    --card:#ffffff;
+    --ink:#1a1a18;
+    --ink-2:#5c5a55;
+    --ink-3:#9c9a94;
+    --ink-4:#c8c5bf;
+    --line:#e5e3df;
+    --line-2:#f0eee9;
+    --accent:#9a6b1e;
+    --accent-2:#c4923a;
+    --accent-soft:#f8f3e8;
+    --up:#c8321e;
+    --up-soft:#fdf3f1;
+    --down:#2d8a4f;
+    --down-soft:#eef7f1;
+    --shadow:0 1px 3px rgba(26,26,24,.04);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
+  html,body{
+    background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",Helvetica,"Microsoft YaHei",Arial,sans-serif;
+    font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  .app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--paper);padding-bottom:48px;}
+  .mono{font-family:"SF Mono","DIN Alternate",Consolas,monospace;font-feature-settings:"tnum";}
+
+  /* ===== Header ===== */
+  .header{
+    background:var(--ink);color:#fff;
+    padding:24px 20px 18px;position:relative;overflow:hidden;
+  }
+  .header::after{
+    content:"";position:absolute;right:-30px;top:-30px;
+    width:120px;height:120px;border-radius:50%;
+    background:radial-gradient(circle,rgba(154,107,30,.18) 0%,transparent 70%);
+  }
+  .header-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+  .brand{display:flex;align-items:baseline;gap:8px;}
+  .brand .name{font-size:22px;font-weight:800;letter-spacing:1px;}
+  .brand .sub{font-size:10px;font-weight:600;color:var(--accent-2);letter-spacing:3px;text-transform:uppercase;}
+  .header-bottom{margin-top:10px;position:relative;z-index:1;}
+  .update{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11px;color:rgba(255,255,255,.6);
+    background:rgba(255,255,255,.08);padding:4px 10px;border-radius:99px;
+  }
+  .update .dot{width:5px;height:5px;border-radius:50%;background:var(--down);box-shadow:0 0 0 2px rgba(45,138,79,.25);}
+
+  /* ===== Section ===== */
+  .section{margin:20px 16px 0;}
+  .sec-head{margin-bottom:10px;}
+  .sec-title{font-size:16px;font-weight:700;color:var(--ink);letter-spacing:.3px;display:flex;align-items:center;gap:8px;}
+  .sec-title::before{content:"";width:3px;height:16px;background:var(--accent);border-radius:2px;}
+  .sec-desc{font-size:11.5px;color:var(--ink-3);margin-top:4px;line-height:1.5;}
+  .sec-count{font-size:11px;color:var(--ink-3);margin-left:6px;font-weight:400;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+
+  /* ===== Market ===== */
+  .market{padding:18px 16px;}
+  .market-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+  .market-left{display:flex;align-items:baseline;gap:8px;}
+  .market-status{font-size:24px;font-weight:800;letter-spacing:-.5px;color:var(--accent);}
+  .market-meta{font-size:11px;color:var(--ink-3);margin-left:2px;}
+  .market-tier{font-size:11px;color:var(--accent);border:1px solid var(--accent-2);padding:3px 8px;border-radius:4px;font-weight:600;}
+  .market-tier.weak{color:var(--down);border-color:var(--down);}
+
+  .market-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px;}
+  .m-cell{background:var(--card);padding:14px;}
+  .m-cell .l{font-size:11px;color:var(--ink-3);margin-bottom:5px;}
+  .m-cell .v{font-size:20px;font-weight:800;letter-spacing:-.3px;}
+  .m-cell .u{font-size:11px;font-weight:500;color:var(--ink-2);margin-left:2px;}
+  .m-cell .d{font-size:10.5px;color:var(--ink-3);margin-top:3px;}
+  .m-cell.pos .v{color:var(--up);}
+  .m-cell.risk .v{color:var(--accent);}
+  .risk-bar{display:flex;gap:2px;margin-top:6px;}
+  .risk-bar i{flex:1;height:3px;background:var(--line-2);border-radius:2px;}
+  .risk-bar i.on{background:var(--accent);}
+
+  .market-insights{padding-top:14px;border-top:1px solid var(--line-2);}
+  .insight{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+  .insight:last-child{margin-bottom:0;}
+  .insight .tag{font-size:10px;font-weight:700;flex-shrink:0;width:30px;padding:2px 0;text-align:center;border-radius:3px;letter-spacing:.5px;}
+  .insight .tag.opp{background:var(--up-soft);color:var(--up);}
+  .insight .tag.risk{background:var(--down-soft);color:var(--down);}
+  .insight .txt{flex:1;font-size:12.5px;color:var(--ink-2);line-height:1.6;}
+
+  .market-breadth{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-2);}
+  .breadth-l{flex:1;}
+  .breadth-l .l{font-size:11px;color:var(--ink-3);margin-bottom:5px;}
+  .breadth-bar{height:5px;border-radius:3px;background:var(--line-2);overflow:hidden;}
+  .breadth-fill{height:100%;background:var(--accent);border-radius:3px;}
+  .breadth-v{font-size:13px;font-weight:700;text-align:right;min-width:56px;}
+  .breadth-v small{font-size:10px;color:var(--ink-3);font-weight:400;display:block;}
+
+  /* ===== Buy ===== */
+  .buy-list{display:flex;flex-direction:column;}
+  .buy-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line-2);}
+  .buy-item:last-child{border-bottom:none;}
+  .buy-body{flex:1;min-width:0;}
+  .buy-name{font-size:14px;font-weight:600;}
+  .buy-code{font-size:11px;color:var(--ink-3);margin-left:5px;font-weight:400;}
+  .buy-cond{font-size:12px;color:var(--ink-2);margin-top:6px;line-height:1.55;padding:7px 10px;border-radius:6px;background:var(--accent-soft);}
+  .buy-cond .price{font-weight:700;color:var(--ink);}
+  .buy-price{text-align:right;flex-shrink:0;min-width:72px;}
+  .buy-price .l{font-size:10px;color:var(--ink-3);}
+  .buy-price .v{font-size:15px;font-weight:700;margin-top:2px;}
+
+  /* ===== Sell ===== */
+  .sell-group-title{font-size:12px;font-weight:600;color:var(--ink-2);padding:12px 16px 6px;border-bottom:1px solid var(--line-2);display:flex;align-items:center;gap:6px;}
+  .sell-group-title .cnt{margin-left:auto;font-size:10.5px;color:var(--ink-3);font-weight:400;}
+  .sell-item{padding:14px 16px;border-bottom:1px solid var(--line-2);}
+  .sell-item:last-child{border-bottom:none;}
+  .sell-top{display:flex;align-items:center;gap:6px;}
+  .sell-name{font-size:14px;font-weight:600;}
+  .sell-code{font-size:11px;color:var(--ink-3);margin-left:5px;font-weight:400;}
+  .sell-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;margin-left:8px;letter-spacing:.3px;}
+  .sell-tag.urgent{background:var(--up-soft);color:var(--up);}
+  .sell-tag.watch{background:var(--accent-soft);color:var(--accent);}
+  .sell-reason{font-size:12px;color:var(--ink-2);margin-top:8px;line-height:1.65;}
+  .sell-reason .line2{margin-top:4px;}
+  .sell-reason .hl{font-weight:700;color:var(--ink);}
+  .sell-reason .rule{color:var(--accent);font-weight:600;border-bottom:1px solid var(--accent-2);padding-bottom:1px;}
+  .sell-meta{display:flex;align-items:center;gap:14px;margin-top:8px;font-size:11px;color:var(--ink-3);}
+  .sell-meta .pnl{font-weight:700;}
+  .pnl.up{color:var(--up);}
+  .pnl.down{color:var(--down);}
+  .sell-prices{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);display:flex;gap:20px;font-size:11px;color:var(--ink-2);}
+  .sell-prices strong{color:var(--ink);font-weight:600;}
+
+  /* ===== Empty State ===== */
+  .empty-state{padding:36px 20px;text-align:center;}
+  .empty-icon{
+    width:48px;height:48px;border-radius:50%;
+    background:var(--accent-soft);margin:0 auto 14px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;color:var(--accent);
+  }
+  .empty-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .empty-desc{font-size:12px;color:var(--ink-3);line-height:1.6;max-width:240px;margin:0 auto;}
+
+  /* ===== Holdings ===== */
+  .filter-bar{display:flex;gap:5px;overflow-x:auto;padding:10px 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--line-2);}
+  .filter-bar::-webkit-scrollbar{display:none;}
+  .chip{flex-shrink:0;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:500;color:var(--ink-2);background:var(--paper);border:1px solid var(--line);cursor:pointer;transition:all .12s;white-space:nowrap;}
+  .chip:active{transform:scale(.96);}
+  .chip.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .hold-list{display:flex;flex-direction:column;}
+  .hold-item{padding:13px 16px;border-bottom:1px solid var(--line-2);}
+  .hold-item:last-child{border-bottom:none;}
+  .hold-top{display:flex;align-items:center;gap:6px;}
+  .hold-name{font-size:14px;font-weight:600;}
+  .hold-code{font-size:11px;color:var(--ink-3);font-weight:400;}
+  .hold-pnl{margin-left:auto;text-align:right;flex-shrink:0;}
+  .hold-pnl .pct{font-size:16px;font-weight:800;}
+  .hold-pnl .pct.up{color:var(--up);}
+  .hold-pnl .pct.down{color:var(--down);}
+  .hold-detail{font-size:11.5px;color:var(--ink-2);margin-top:5px;line-height:1.55;}
+  .hold-detail .hl{color:var(--ink);font-weight:600;}
+  .hold-collapse{display:none;}
+  .hold-collapse.open{display:block;}
+  .expand-btn{padding:12px 16px;text-align:center;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-top:1px solid var(--line-2);cursor:pointer;transition:all .12s;}
+  .expand-btn:active{background:#f0e8d8;}
+
+  /* ===== Performance ===== */
+  .perf{padding:18px 16px;}
+  .perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:18px;}
+  .p-cell{background:var(--card);padding:14px;position:relative;}
+  .p-cell.dark{background:var(--accent);color:#fff;}
+  .p-cell .l{font-size:11px;color:var(--ink-3);}
+  .p-cell.dark .l{color:rgba(255,255,255,.7);}
+  .p-cell .v{font-size:22px;font-weight:800;letter-spacing:-.3px;margin-top:4px;}
+  .p-cell.dark .v{color:#fff;}
+  .p-cell .u{font-size:11px;font-weight:500;margin-left:2px;}
+  .p-cell .s{font-size:10.5px;color:var(--ink-3);margin-top:3px;}
+  .p-cell.dark .s{color:rgba(255,255,255,.6);}
+
+  .chart-legend{display:flex;align-items:center;gap:14px;margin-bottom:12px;font-size:11px;color:var(--ink-3);}
+  .chart-legend .item{display:flex;align-items:center;gap:5px;}
+  .chart-legend .swatch{width:10px;height:10px;border-radius:2px;}
+  .chart-legend .swatch.bar{background:var(--accent);}
+
+  .combo-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 2px 4px;border-bottom:1px solid var(--line-2);margin-bottom:8px;}
+  .combo-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .combo-col .bar{width:100%;max-width:22px;border-radius:3px 3px 0 0;background:var(--accent);transition:height .4s ease;min-height:2px;}
+  .combo-col .bar-val{font-size:9.5px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+  .combo-col .col-label{font-size:10px;color:var(--ink-3);margin-top:4px;}
+  .combo-col .col-count{font-size:9px;color:var(--ink-3);margin-top:1px;font-weight:500;}
+  .combo-col .col-count .num{color:var(--ink-2);font-weight:600;}
+
+  .perf-divider{height:1px;background:var(--line-2);margin:18px 0;}
+
+  .year-blocks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .year-block{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 10px;text-align:center;position:relative;overflow:hidden;transition:all .15s;}
+  .year-block .yr{font-size:11px;font-weight:600;color:var(--ink-3);letter-spacing:.5px;}
+  .year-block .wr{font-size:18px;font-weight:800;letter-spacing:-.3px;margin-top:4px;}
+  .year-block .tc{font-size:10px;color:var(--ink-3);margin-top:2px;}
+  .year-block .yr-bar{height:4px;border-radius:2px;background:var(--line-2);margin-top:8px;overflow:hidden;}
+  .year-block .yr-fill{height:100%;border-radius:2px;}
+  .year-block.lvl-5 .yr-fill{background:var(--up);}
+  .year-block.lvl-5 .wr{color:var(--up);}
+  .year-block.lvl-4 .yr-fill{background:var(--accent);}
+  .year-block.lvl-4 .wr{color:var(--accent);}
+  .year-block.lvl-3 .yr-fill{background:var(--accent-2);}
+  .year-block.lvl-3 .wr{color:var(--accent-2);}
+  .year-block.lvl-2 .yr-fill{background:var(--ink-3);}
+  .year-block.lvl-2 .wr{color:var(--ink-2);}
+  .year-block.lvl-1 .yr-fill{background:var(--ink-4);}
+  .year-block.lvl-1 .wr{color:var(--ink-3);}
+
+  .perf-sub-title{font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:10px;}
+
+  /* ===== Footer ===== */
+  .footer{margin-top:24px;padding:16px;text-align:center;font-size:11px;color:var(--ink-3);line-height:1.8;border-top:1px solid var(--line);}
+
+  /* ===== Loading ===== */
+  .loading{padding:60px 20px;text-align:center;color:var(--ink-3);font-size:13px;}
+  .error{padding:40px 20px;text-align:center;}
+  .error .title{font-size:15px;font-weight:700;color:var(--up);margin-bottom:8px;}
+  .error .desc{font-size:12px;color:var(--ink-3);}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <div class="loading">加载中…</div>
+</div>
+
+<script>
+(function(){
+  const isProd = window.location.protocol === 'https:';
+  const API = window.__ETF_RADAR_PUBLIC_API_BASE__ || (isProd ? '/etf-radar-api/api/public/' : '/api/public/');
+
+  const TIER_LABEL = {weak:'偏弱', recover:'回暖', mid:'中性', strong:'偏强', overheat:'过热'};
+  const DEFAULT_HOLD_COUNT = 5;
+
+  // ========== 工具函数 ==========
+  function fmt(n, d){ d = d==null ? 2 : d; return Number(n).toFixed(d); }
+  function fmtPct(n){ const v = Number(n); return (v>=0?'+':'') + v.toFixed(2) + '%'; }
+  function fmtDateMD(dateStr){
+    if(!dateStr) return '';
+    const [y,m,d] = dateStr.split('-');
+    return parseInt(m,10) + '月' + parseInt(d,10) + '日';
+  }
+  function fmtDateTime(dtStr){
+    if(!dtStr) return '';
+    try {
+      const d = new Date(dtStr);
+      return (d.getMonth()+1) + '月' + d.getDate() + '日 ' +
+        String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    } catch(e){ return dtStr; }
+  }
+  function pnlClass(v){ return Number(v) >= 0 ? 'up' : 'down'; }
+  function escapeHtml(s){
+    const div = document.createElement('div');
+    div.textContent = s == null ? '' : String(s);
+    return div.innerHTML;
+  }
+
+  // ========== 头部 ==========
+  function renderHeader(market){
+    const date = market.date || '';
+    const updated = market.updated_at || '';
+    const timeText = date ? fmtDateMD(date) + ' 收盘' : (updated ? fmtDateTime(updated) : '—');
+    return `
+      <div class="header">
+        <div class="header-top">
+          <div class="brand">
+            <span class="name">ETF精选信号</span>
+            <span class="sub">RADAR</span>
+          </div>
+        </div>
+        <div class="header-bottom">
+          <span class="update"><span class="dot"></span>${escapeHtml(timeText)}</span>
+        </div>
+      </div>`;
+  }
+
+  // ========== 市场综合情况 ==========
+  function renderMarket(market){
+    const rs = market.risk_summary || {};
+    const status = rs.market_status || market.market_status || '中性';
+    const stateDay = rs.state_day != null ? rs.state_day : (market.state_day || 0);
+    const tier = market.market_tier || 'mid';
+    const tierLabel = TIER_LABEL[tier] || '中性';
+    const tierClass = tier === 'weak' ? 'weak' : '';
+    const position = rs.position || '—';
+    const riskLevel = rs.risk_level || 3;
+    const opportunity = rs.opportunity || '';
+    const riskText = rs.risk_text || '';
+    const breadth = rs.breadth != null ? rs.breadth : (market.breadth || 0);
+    const breadthMa5 = rs.breadth_ma5 != null ? rs.breadth_ma5 : (market.breadth_ma5 || 0);
+    const breadthPct = (breadth * 100).toFixed(1);
+    const breadthMa5Pct = (breadthMa5 * 100).toFixed(1);
+
+    let riskBars = '';
+    for(let i=1;i<=5;i++){
+      riskBars += '<i class="' + (i <= riskLevel ? 'on' : '') + '"></i>';
+    }
+
+    return `
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">当前市场综合情况</div>
+        </div>
+        <div class="card">
+          <div class="market">
+            <div class="market-row">
+              <div class="market-left">
+                <span class="market-status">${escapeHtml(status)}</span>
+                <span class="market-meta">持续 ${stateDay} 天</span>
+              </div>
+              <span class="market-tier ${tierClass}">${escapeHtml(tierLabel)}</span>
+            </div>
+            <div class="market-grid">
+              <div class="m-cell pos">
+                <div class="l">建议仓位</div>
+                <div class="v mono">${escapeHtml(position)}</div>
+                <div class="d">基于当前市场状态</div>
+              </div>
+              <div class="m-cell risk">
+                <div class="l">风险等级</div>
+                <div class="v mono">${riskLevel}<span class="u">/5</span></div>
+                <div class="risk-bar">${riskBars}</div>
+              </div>
+            </div>
+            <div class="market-insights">
+              <div class="insight">
+                <span class="tag opp">机会</span>
+                <span class="txt">${escapeHtml(opportunity)}</span>
+              </div>
+              <div class="insight">
+                <span class="tag risk">风险</span>
+                <span class="txt">${escapeHtml(riskText)}</span>
+              </div>
+            </div>
+            <div class="market-breadth">
+              <div class="breadth-l">
+                <div class="l">市场广度（上涨占比）</div>
+                <div class="breadth-bar"><div class="breadth-fill" style="width:${Math.min(100,breadthPct)}%"></div></div>
+              </div>
+              <div class="breadth-v mono">${breadthPct}%<small>5日均值 ${breadthMa5Pct}%</small></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ========== 可买入信号 ==========
+  function renderBuySignals(signals){
+    const list = signals || [];
+    if(list.length === 0){
+      return `
+        <div class="section">
+          <div class="sec-head">
+            <div class="sec-title">可买入信号<span class="sec-count">0 只</span></div>
+          </div>
+          <div class="card">
+            <div class="empty-state">
+              <div class="empty-icon">—</div>
+              <div class="empty-title">暂无可买入信号</div>
+              <div class="empty-desc">当前市场未触发买入条件，请关注后续更新</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    let items = '';
+    list.forEach(function(item){
+      const price = item.entry_price || 0;
+      items += `
+        <div class="buy-item">
+          <div class="buy-body">
+            <div class="buy-name">${escapeHtml(item.name || '—')}<span class="buy-code mono">${escapeHtml(item.code || '')}</span></div>
+            <div class="buy-cond">参考价 <span class="price mono">${fmt(price,3)}</span></div>
+          </div>
+          <div class="buy-price"><div class="l">参考价</div><div class="v mono">${fmt(price,3)}</div></div>
+        </div>`;
+    });
+
+    return `
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">可买入信号<span class="sec-count">${list.length} 只</span></div>
+          <div class="sec-desc">建议下个交易日开盘关注</div>
+        </div>
+        <div class="card">
+          <div class="buy-list">${items}</div>
+        </div>
+      </div>`;
+  }
+
+  // ========== 可卖出信号 ==========
+  function renderSellSignals(alerts){
+    const list = alerts || [];
+    const urgent = list.filter(function(a){ return a.urgency_label === '明日卖出'; });
+    const watch = list.filter(function(a){ return a.urgency_label !== '明日卖出'; });
+
+    if(list.length === 0){
+      return `
+        <div class="section">
+          <div class="sec-head">
+            <div class="sec-title">可卖出的信号<span class="sec-count">0 条</span></div>
+            <div class="sec-desc">基于止盈止损策略，提供卖出建议</div>
+          </div>
+          <div class="card">
+            <div class="empty-state">
+              <div class="empty-icon">—</div>
+              <div class="empty-title">暂无可卖出信号</div>
+              <div class="empty-desc">当前持仓暂未触发止盈止损条件，正常持有中</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function renderItem(a, isUrgent){
+      const tagClass = isUrgent ? 'urgent' : 'watch';
+      const tagText = isUrgent ? '建议卖出' : ('若收盘低于' + fmt(a.trigger_price,3) + '建议卖出');
+      const pnl = a.current_pnl != null ? a.current_pnl : 0;
+      const pc = pnlClass(pnl);
+      return `
+        <div class="sell-item">
+          <div class="sell-top">
+            <span class="sell-name">${escapeHtml(a.name || '—')}</span>
+            <span class="sell-code mono">${escapeHtml(a.code || '')}</span>
+            <span class="sell-tag ${tagClass}">${escapeHtml(tagText)}</span>
+          </div>
+          <div class="sell-reason">
+            最新收盘价 <span class="hl mono">${fmt(a.latest_price,3)}</span>
+            <span class="line2">依据<span class="rule">${escapeHtml(a.rule_label || '止盈止损')}</span>，触发价 <span class="hl mono">${fmt(a.trigger_price,3)}</span></span>
+          </div>
+          <div class="sell-meta">
+            <span>信号触发后已持有 ${a.hold_days || 0} 天</span>
+            <span class="pnl ${pc} mono">收益 ${fmtPct(pnl)}</span>
+          </div>
+          <div class="sell-prices">
+            <span>最新价 <strong class="mono">${fmt(a.latest_price,3)}</strong></span>
+            <span>触发价 <strong class="mono">${fmt(a.trigger_price,3)}</strong></span>
+          </div>
+        </div>`;
+    }
+
+    let html = '';
+    if(urgent.length > 0){
+      html += `<div class="sell-group-title">明日建议操作<span class="cnt">${urgent.length} 只</span></div>`;
+      urgent.forEach(function(a){ html += renderItem(a, true); });
+    }
+    if(watch.length > 0){
+      html += `<div class="sell-group-title">明日需重点关注<span class="cnt">${watch.length} 只</span></div>`;
+      watch.forEach(function(a){ html += renderItem(a, false); });
+    }
+
+    return `
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">可卖出的信号<span class="sec-count">${list.length} 条</span></div>
+          <div class="sec-desc">基于止盈止损策略，提供卖出建议</div>
+        </div>
+        <div class="card">${html}</div>
+      </div>`;
+  }
+
+  // ========== 持仓中 ==========
+  let _holdings = [];
+  let _holdFilter = 'all';
+  let _holdExpanded = false;
+
+  function renderHoldings(activeSignals){
+    _holdings = (activeSignals || []).slice().sort(function(a,b){ return (b.pnl_pct||0) - (a.pnl_pct||0); });
+
+    if(_holdings.length === 0){
+      return `
+        <div class="section">
+          <div class="sec-head">
+            <div class="sec-title">持仓中<span class="sec-count">0 只</span></div>
+            <div class="sec-desc">买入信号触发后，以次日收盘价买入，正常持有并进行监控</div>
+          </div>
+          <div class="card">
+            <div class="empty-state">
+              <div class="empty-icon">📌</div>
+              <div class="empty-title">暂无持仓</div>
+              <div class="empty-desc">当前市场环境下暂未建仓</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    const chips = [
+      {key:'all', label:'全部'},
+      {key:'0-3', label:'3天以内'},
+      {key:'3-5', label:'3-5天'},
+      {key:'6-10', label:'6-10天'},
+      {key:'11-15', label:'11-15天'},
+      {key:'16-20', label:'16-20天'},
+      {key:'20+', label:'20天以上'},
+    ];
+    let chipHtml = '';
+    chips.forEach(function(c){
+      chipHtml += `<div class="chip ${_holdFilter===c.key?'active':''}" onclick="window.__filterHold('${c.key}',this)">${c.label}</div>`;
+    });
+
+    const filtered = _holdings.filter(function(h){
+      const days = h.hold_days || 0;
+      switch(_holdFilter){
+        case 'all': return true;
+        case '0-3': return days <= 3;
+        case '3-5': return days >= 3 && days <= 5;
+        case '6-10': return days >= 6 && days <= 10;
+        case '11-15': return days >= 11 && days <= 15;
+        case '16-20': return days >= 16 && days <= 20;
+        case '20+': return days > 20;
+        default: return true;
+      }
+    });
+
+    const visible = _holdExpanded ? filtered : filtered.slice(0, DEFAULT_HOLD_COUNT);
+    const hidden = filtered.length - visible.length;
+
+    function renderItem(h){
+      const pc = pnlClass(h.pnl_pct || 0);
+      return `
+        <div class="hold-item" data-days="${h.hold_days || 0}">
+          <div class="hold-top">
+            <span class="hold-name">${escapeHtml(h.name || '—')}</span>
+            <span class="hold-code mono">${escapeHtml(h.code || '')}</span>
+            <span class="hold-pnl"><span class="pct ${pc} mono">${fmtPct(h.pnl_pct || 0)}</span></span>
+          </div>
+          <div class="hold-detail"><span class="hl mono">${fmtDateMD(h.entry_date)}</span> 以 <span class="hl mono">${fmt(h.entry_price,3)}</span> 买入，现价 <span class="hl mono">${fmt(h.latest_price,3)}</span>，累计持有 ${h.hold_days || 0} 天</div>
+        </div>`;
+    }
+
+    let itemsHtml = '';
+    visible.forEach(function(h){ itemsHtml += renderItem(h); });
+
+    let expandHtml = '';
+    if(hidden > 0 && !_holdExpanded){
+      expandHtml = `<div class="expand-btn" onclick="window.__toggleExpand()">展开全部 ${filtered.length} 只 <span>▾</span></div>`;
+    } else if(_holdExpanded && filtered.length > DEFAULT_HOLD_COUNT){
+      expandHtml = `<div class="expand-btn" onclick="window.__toggleExpand()">收起 <span>▴</span></div>`;
+    }
+
+    return `
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">持仓中<span class="sec-count">${_holdings.length} 只</span></div>
+          <div class="sec-desc">买入信号触发后，以次日收盘价买入，正常持有并进行监控</div>
+        </div>
+        <div class="card">
+          <div class="filter-bar">${chipHtml}</div>
+          <div class="hold-list">${itemsHtml}</div>
+          ${expandHtml}
+        </div>
+      </div>`;
+  }
+
+  window.__filterHold = function(range, el){
+    _holdFilter = range;
+    _holdExpanded = true;
+    document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+    if(el) el.classList.add('active');
+    refreshHoldings();
+  };
+
+  window.__toggleExpand = function(){
+    _holdExpanded = !_holdExpanded;
+    refreshHoldings();
+  };
+
+  function refreshHoldings(){
+    const container = document.getElementById('holdings-section');
+    if(container){
+      container.outerHTML = renderHoldings(_holdings);
+    }
+  }
+
+  // ========== 信号战绩 ==========
+  function renderPerformance(perf){
+    const all = perf.all_time || {};
+    const y26 = perf.year_2026 || {};
+    const totalSignals = all.total_signals || 0;
+    const winRate = all.win_rate || 0;
+    const avgRet = all.avg_ret || 0;
+    const maxDD = perf.max_drawdown_pct;
+    const plRatio = perf.profit_loss_ratio;
+    const y26WinRate = y26.win_rate || 0;
+
+    // 近6个月柱状图
+    const monthly = perf.monthly || {};
+    const months = Object.keys(monthly).sort();
+    let chartHtml = '';
+    months.forEach(function(m){
+      const d = monthly[m];
+      const label = m.split('-')[1] + '月';
+      const wr = d.win_rate || 0;
+      const cnt = d.total_signals || 0;
+      chartHtml += `
+        <div class="combo-col">
+          <div class="bar-val mono">${wr.toFixed(1)}%</div>
+          <div class="bar" style="height:${Math.max(2, wr)}%"></div>
+          <div class="col-label">${label}</div>
+          <div class="col-count"><span class="num mono">${cnt}</span>笔</div>
+        </div>`;
+    });
+
+    // 历年胜率色块
+    const yearly = perf.yearly || {};
+    const years = Object.keys(yearly).sort();
+    let yearHtml = '';
+    years.forEach(function(y){
+      const d = yearly[y];
+      const wr = d.win_rate || 0;
+      const cnt = d.total_signals || 0;
+      let lvl = 1;
+      if(wr >= 75) lvl = 5;
+      else if(wr >= 68) lvl = 4;
+      else if(wr >= 60) lvl = 3;
+      else if(wr >= 50) lvl = 2;
+      yearHtml += `
+        <div class="year-block lvl-${lvl}">
+          <div class="yr">${y}</div>
+          <div class="wr mono">${wr.toFixed(1)}%</div>
+          <div class="tc mono">${cnt} 笔</div>
+          <div class="yr-bar"><div class="yr-fill" style="width:${Math.min(100,wr)}%"></div></div>
+        </div>`;
+    });
+
+    const ddText = maxDD != null ? '-' + fmt(maxDD,1) + '%' : '—';
+    const plText = plRatio != null ? fmt(plRatio,2) : '—';
+
+    return `
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">信号战绩</div>
+          <div class="sec-desc">自 2023 年以来信号表现</div>
+        </div>
+        <div class="card">
+          <div class="perf">
+            <div class="perf-grid">
+              <div class="p-cell dark">
+                <div class="l">累计胜率</div>
+                <div class="v mono">${fmt(winRate,1)}<span class="u">%</span></div>
+                <div class="s">2026年 ${fmt(y26WinRate,1)}%</div>
+              </div>
+              <div class="p-cell">
+                <div class="l">累计信号</div>
+                <div class="v mono">${totalSignals.toLocaleString()}<span class="u">笔</span></div>
+                <div class="s">2026年 ${y26.total_signals || 0} 笔</div>
+              </div>
+              <div class="p-cell">
+                <div class="l">平均收益</div>
+                <div class="v mono" style="color:var(--up)">+${fmt(avgRet,2)}<span class="u">%</span></div>
+                <div class="s">盈亏比 ${plText}</div>
+              </div>
+              <div class="p-cell">
+                <div class="l">最大回撤</div>
+                <div class="v mono" style="color:var(--down)">${ddText}</div>
+                <div class="s">等权单笔净值</div>
+              </div>
+            </div>
+            <div class="perf-sub-title">近 6 个月胜率与交易笔数</div>
+            <div class="chart-legend">
+              <div class="item"><span class="swatch bar"></span>胜率</div>
+              <div class="item"><span style="font-size:10px;color:var(--ink-3);">数字为交易笔数</span></div>
+            </div>
+            <div class="combo-chart">${chartHtml}</div>
+            <div class="perf-divider"></div>
+            <div class="perf-sub-title">历年胜率（2023 年以来）</div>
+            <div class="year-blocks">${yearHtml}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ========== 数据加载 ==========
+  async function fetchJSON(p){
+    // 优先尝试 API 端点；失败时回退到相对路径静态 JSON（适用于纯静态托管）
+    try {
+      const r = await fetch(API + p, {cache:'no-cache'});
+      if(r.ok) return await r.json();
+    } catch(e) { /* API unavailable, fall through to static */ }
+    const r = await fetch('../data/' + p + '.json', {cache:'no-cache'});
+    if(!r.ok) throw new Error('HTTP '+r.status+' (both API and static JSON unavailable)');
+    return r.json();
+  }
+
+  async function load(){
+    try {
+      const [market, signals, activeSignals, performance, exitAlerts] = await Promise.all([
+        fetchJSON('market'),
+        fetchJSON('signals'),
+        fetchJSON('active_signals'),
+        fetchJSON('performance'),
+        fetchJSON('exit_alerts'),
+      ]);
+
+      const html = renderHeader(market)
+        + renderMarket(market)
+        + renderBuySignals(signals)
+        + renderSellSignals(exitAlerts)
+        + '<div id="holdings-section">' + renderHoldings(activeSignals) + '</div>'
+        + renderPerformance(performance)
+        + '<div class="footer">信号仅供参考，不构成投资建议</div>';
+
+      document.getElementById('app').innerHTML = html;
+    } catch(err){
+      document.getElementById('app').innerHTML = `
+        <div class="error">
+          <div class="title">数据加载失败</div>
+          <div class="desc">${escapeHtml(err.message || String(err))}</div>
+        </div>`;
+    }
+  }
+
+  load();
+})();
+</script>
+
+</body>
+</html>
